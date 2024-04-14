@@ -1,0 +1,148 @@
+﻿@model List<CartItemModel>
+@{
+    ViewData["Title"] = "AddtoCart";
+}
+
+<h1>AddtoCart</h1>
+
+@if (ViewBag.IsSuccess==false)
+{
+    <div class="container">
+        <table class="table table-striped border" id="myTable">
+            <thead>
+                <tr class="table-info">
+                    <th>
+                        Product Image
+
+                    </th>
+                    <th>
+                        Product Name
+                    </th>
+                    <th>
+                        Product Color
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        Product TYpe
+                    </th>
+
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                the cart is empty
+
+            </tbody>
+
+        </table>
+    </div>
+    <h2> the cart is empty</h2>
+}
+
+else
+{
+    <div class="container">
+    <table class="table table-striped border" id="myTable">
+        <thead>
+            <tr class="table-info">
+                <th>
+                    Product Image
+
+                </th>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Product Color
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Price
+                </th>
+                <th>
+                    Product TYpe
+                </th>
+               
+              
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                    if (item.Quantity > 0)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@item.ImageUrl" width="200px" height="150px" alt="Alternate Text" />
+                            </td>
+                            <td>@item.ProductName</td>
+                            <td>@item.ProductColor</td>
+                            <td>@item.Quantity</td>
+                            <td>@(item.Price * item.Quantity)</td>
+                            <td>@item.ProductType</td>
+                            <td>
+                                <input type="checkbox" class="item-checkbox" data-price="@(item.Price * item.Quantity)" />
+                            </td>
+                            <td>
+                                <form method="post" asp-area="Customer" asp-controller="Home" asp-action="RemoveFromCart" asp-route-id="@item.Id">
+                                    <label for="quantity">Quantity:</label>
+                                    <input type="number" id="QQuantity" name="quantity" value="0" min="0" max="@item.Quantity">
+                                    <button type="submit" class="btn btn-danger form-control">Remove From Cart</button>
+                                </form>
+
+
+                            </td>
+
+                        </tr>
+                    }
+                    
+
+            }
+        </tbody>
+
+    </table>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <a asp-action="ShowAllRecords" asp-area="Customer" asp-controller="Home">Home Page</a>
+        </div>
+        <div class="col-6 text-right">
+            <h3>Total Amount</h3>
+           @*  <h3>Grand Total=@Model.Sum(x=>x.Price)</h3> *@
+            <h3 id="total-amount">0</h3>
+            <a asp-area="Customer" asp-action="CheckOut" asp-controller="Order" class="btn btn-info">Process to Checkout</a>
+        </div>
+    </div>
+
+}
+<script>
+    const checkboxes = document.querySelectorAll('.item-checkbox');
+
+    // Attach click event handler to each checkbox
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('click', function () {
+            let totalAmount = 0;
+            // Calculate total amount based on selected checkboxes
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    totalAmount += parseFloat(cb.dataset.price);
+                }
+            });
+            // Update the total amount display
+            document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+        });
+    });
+
+</script>
+
+
+
+
+

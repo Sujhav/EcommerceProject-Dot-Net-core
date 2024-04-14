@@ -1,0 +1,103 @@
+﻿@model IEnumerable<ProductsModel>
+
+@{
+    ViewData["Title"] = "ShowAllSpecialTag";
+    ViewData["EditAction"] = "EditProducts";
+    ViewData["Controller"] = "Product";
+    ViewData["Details"] = "Details";
+    ViewData["Delete"] = "DeleteProducts";
+}
+
+<div class="row">
+    <div class="col-6">
+        <h2 class="text-info"> Special Tag List</h2>
+    </div>
+    <div class="col-6 text-right">
+        <a asp-action="Create" asp-controller="Product" class="btn btn-info">&nbsp;+ New Product</a>
+    </div>
+</div>
+
+<div class="container">
+    <form method="post" asp-action="ShowAllProduts">
+        <div class="row">
+            <div class="col-3">
+                <input type="number"class="form-control" name="LowAmount" />
+            </div>
+            <div class="col-3">
+                <input type="number" class="form-control" name="HighAmount" />
+            </div>
+            <div class="col-3">
+                <input type="submit" class="form-control" value="search"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    <table class="table table-striped border" id="myTable">
+        <thead>
+            <tr class="table-info">
+                <th>
+                    Product Name
+
+                </th>
+                <th>
+                    Product Color
+                </th>
+                <th>
+                    price
+                </th>
+                <th>
+                    ProductType
+                </th>
+                <th>
+                    SpecialTag
+                </th>
+                <th>
+                    Availability
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+      <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.ProductColor</td>
+                    <td>@item.Price</td>
+                    <td>@item.ProductType</td>
+                    <td>@item.SpecialTag</td>
+                    <td>@item.IsAvailable</td>
+                    <td>
+                        @* <a asp-area="Admin" asp-controller="Product" asp-action="EditProducts" asp-route-id="@item.Id"> Edit</a> *@
+                        <partial name="_ButtonPartialView" model="@item.Id"></partial>
+                    </td>
+                </tr>
+               
+
+            }
+      </tbody>
+        
+    </table>
+  
+
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            <script type="text/javascript">
+            $(document).ready(function () {
+                $('#myTable').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print'
+                    ]
+                });
+            });
+
+          
+            </script>
+    }
+}

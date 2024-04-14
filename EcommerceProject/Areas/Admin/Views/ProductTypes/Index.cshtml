@@ -1,0 +1,61 @@
+﻿@model IEnumerable<ProductTypesModel>
+@{
+    ViewData["EditAction"] = "EditProduct";
+    ViewData["Controller"] = "ProductTypes";
+    ViewData["Details"] = "Details";
+    ViewData["Delete"] = "Delete";
+    string message = TempData["save"] as string;
+}
+@if (!string.IsNullOrEmpty(message))
+{
+    <div id="alertMessage" class="alert alert-success">@message</div>
+}
+
+
+<div class="row">
+
+    <div class="col-6">
+        <h2 class="text-info"> Product Type List</h2>
+    </div>
+    <div class="col-6 text-right">
+            <a asp-action="Create" class="btn btn-info">&nbsp;New Product Type</a>
+
+    </div>
+</div>
+
+<div class="container">
+    <table class="table table-striped border">
+        <tr class="table-info">
+            <th>
+                @Html.DisplayNameFor(c => c.ProductType)
+            </th>
+            <th></th>
+            
+        </tr>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@item.ProductType</td>
+                
+                    <partial name="_ButtonPartialView"  model="@item.Id"/>
+                
+            </tr>
+        }
+    </table>
+</div>
+@if (!string.IsNullOrEmpty(message))
+{
+    <div id="alertMessage" class="alert alert-success">@message</div>
+}
+@section Scripts {
+    <script>
+        $(function () {
+            var alertMessage = $('#alertMessage');
+            if (alertMessage.length) {
+                alertMessage.fadeTo(2000, 500).slideUp(500, function () {
+                    alertMessage.slideUp(500);
+                });
+            }
+        });
+    </script>
+}

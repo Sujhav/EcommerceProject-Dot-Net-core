@@ -1,0 +1,44 @@
+﻿@inject EcommerceProject.Repository.AccountRepository _accountRepository
+@{
+    ViewData["Title"] = "GetAllUsers";
+}
+
+<h1>GetAllUsers</h1>
+    <table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th> Role Assigned</th>
+            <th>assign role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    @foreach (var role in await _accountRepository.GetRolesForUsersAsync(user.Id))
+                    {
+                        <span>@role</span>
+
+                        <br />
+                    }
+                </td>
+                <td>
+                    <a asp-area="Identity" asp-action="RoleAssign" asp-controller="Account" asp-route-id="@user.Id">Asssign role</a>
+                </td>
+                <td>
+                    <a asp-area="Identity" asp-action="RoleRemove" asp-controller="Account" asp-route-id="@user.Id">Remove role</a>
+                </td>
+                
+                <!-- Add more columns as needed -->
+            </tr>
+        }
+    </tbody>
+</table>
+

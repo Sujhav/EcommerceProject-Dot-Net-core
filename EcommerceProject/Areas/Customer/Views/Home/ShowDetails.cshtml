@@ -1,0 +1,119 @@
+﻿
+@model  ProductsModel
+
+@using EcommerceProject.Utility
+@using Microsoft.AspNetCore.Http
+@* @inject IHttpContextAccessor HttpContextAccessor
+@{
+    List<ProductsModel> products = HttpContextAccessor.HttpContext.Session.Get<List<ProductsModel>>("products");
+    ProductsModel product = null;   
+    if (products != null)
+    {
+        product=products.FirstOrDefault(x=>x.Id==Model.Id);
+    }
+
+} *@
+
+@{
+    ViewData["Title"] = "EditProducts";
+    
+}
+
+
+<h2 class="text-info">Edit Product</h2>
+
+<h2>@ViewBag.message</h2>
+<form asp-action="ShowDetails" asp-area="Customer" asp-controller="Home" method="post" enctype="multipart/form-data">
+    <div class="p-4 rounded border row">
+        <div asp-validation-summary="ModelOnly" class="text-danger">
+        </div>
+        <div class="col-8">
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="ProductName"></label>
+                </div>
+                <div class="col-8">
+                    <input type="hidden" asp-for="Id" />
+                    <input asp-for="ProductName" readonly="readonly" class="form-control" />
+                </div>
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Price"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Price" readonly="readonly" class="form-control" />
+                </div>
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="ProductColor"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="ProductColor"  readonly="readonly" class="form-control" />
+                </div>
+                <span asp-validation-for="ProductColor" class="text-danger"></span>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="ProductId"></label>
+                </div>
+                <div class="col-8">
+                   @*  <select asp-for="ProductId" asp-items="@ViewBag.Product" class="form-control"></select> *@
+                    <input asp-for="ProductType" readonly="readonly" class="form-control" />
+                </div>
+                <span asp-validation-for="ProductId" class="text-danger"></span>
+            </div>
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1">
+            <div class="form-group row">
+                <div class="col-4">
+                    
+                </div>
+                <div class="col-8">
+                    @* @if (product != null)
+                    {
+                        <button type="submit" asp-area="Customer" asp-controller="Home" class="btn btn-danger form-control" asp-action="Remove" asp-route-id="@Model.Id">Remove From Cart</button>
+                    }
+                    else
+                    {} *@
+                       
+                        
+                    
+                    <input asp-action="ShowDetails" asp-area="Customer" asp-controller="Home" type="submit" class="btn btn-info" value="Add TO Cart" />
+    
+                   
+                </div>
+                
+            </div>      
+          
+            <div class="form-group">
+                
+                <a asp-action="ShowAllProduts" asp-controller="Product" asp-area="Admin" class="btn btn-success">Back to List</a>
+            </div>
+        </div>
+        <div class="col-1"></div>
+        <div class="col-3">
+            <img src="@Model.ImageUrl" width="100%" height="250px" style="border-radius: 5px;border: 1px solid #efefef" />
+            @if (Model.IsAvailable)
+            {
+                <img src="~/Product/AvailabilityImages/Instock.png" width="200px" height="50px"/>
+            }
+            else
+            {
+                <img src="~/Product/AvailabilityImages/OUTOFSTOCK.jpg" width="200px" height="50px" />
+            }
+        </div>
+
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

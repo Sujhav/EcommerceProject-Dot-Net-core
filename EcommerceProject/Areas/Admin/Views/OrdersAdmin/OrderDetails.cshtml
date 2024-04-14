@@ -1,0 +1,204 @@
+﻿@model EcommerceProject.ViewModel.OrderDetailsVM
+
+<div class="PaddingAll bg-info" style="border:1px solid red">
+   <form method="post">
+       <input asp-for="@Model.Order.Id" type="hidden" />
+       <div class="row">
+           <div class="col-lg-6 col-md-5 col-sm-12 p-2">
+               <div class="p-2 bg-dark text-white fw-bold shadowingBorder">
+                   <h6 class="text-info">Customer Details</h6>
+                   <hr />
+                   <div asp-validation-summary="ModelOnly"></div>
+
+                   <div class="row mb-2">
+                       <div class="col-5">
+                           <label asp-for="Order.Name"></label>
+                       </div>
+                       <div class="col-7">
+                           <input  asp-for="Order.Name" class="form-control" readonly="readonly" />
+                           <span asp-validation-for="Order.Name" class="text-danger"></span>
+                       </div>
+                   </div>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <label asp-for="Order.PhoneNo"></label>
+                        </div>
+                        <div class="col-7">
+                            <input asp-for="Order.PhoneNo" class="form-control" readonly="readonly" />
+                            <span asp-validation-for="Order.PhoneNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <label asp-for="Order.OrderStatus"></label>
+                        </div>
+                        <div class="col-7">
+                            <input asp-for="Order.OrderStatus" class="form-control" readonly="readonly" />
+                            <span asp-validation-for="Order.OrderStatus" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-5">
+                            <label asp-for="Order.PaymentStatus"></label>
+                        </div>
+                        <div class="col-7">
+                            <input asp-for="Order.PaymentStatus" class="form-control" readonly="readonly" />
+                            <span asp-validation-for="Order.PaymentStatus" class="text-danger"></span>
+                        </div>
+                    </div>
+                    @if (Model != null && Model.Order != null && Model.Order.OrderStatus != null && Model.Order.OrderStatus != "Processing")
+                    {
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <label asp-for="Order.TrackingNumber"></label>
+                            </div>
+                            <div class="col-7">
+                                <input asp-for="Order.TrackingNumber" class="form-control" readonly="readonly" />
+                                <span asp-validation-for="Order.TrackingNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <label asp-for="Order.TrackingNumber"></label>
+                            </div>
+                            <div class="col-7">
+                                <input asp-for="Order.TrackingNumber" id="trackingNumber" class="form-control" onchange="EnterDataTracking()" required/>
+                                <span asp-validation-for="Order.TrackingNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    }
+                       <div class="row mb-2">
+                            <div class="col-5">
+                                    <label asp-for="Order.OrderDate"></label>
+                            </div>
+                            <div class="col-7">
+                                    <input asp-for="Order.OrderDate" class="form-control" readonly="readonly" />
+                                    <span asp-validation-for="Order.OrderDate" class="text-danger"></span>
+                            </div>  
+                        </div>
+                   
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <label asp-for="Order.ShippedDate"></label>
+                            </div>
+                            <div class="col-7">
+                                <input asp-for="Order.ShippedDate" type="text" class="form-control" readonly="readonly"  />
+                                <span asp-validation-for="Order.ShippedDate" class="text-danger"></span>
+                            </div>
+                        </div>  
+                    
+               </div>
+           </div>
+
+            <div class ="col-lg-6 col-md-7 col-sm-12 p-2">
+                <div class="p-2 bg-dark shadowingBorder" id="List-example">
+                    <h6 class="text-info">OrderDetails</h6>
+                    <hr  style="border:1px solid red"/>
+                    @{
+                        Decimal totalorderprice = 0;
+                    }
+                    <div class="p-2 bg-white" style="border-radius:8px;border:1px solid red" >
+                        <div class="text-center overflow-scroll bg-white" style="height:340px">
+                            @foreach(var item in Model.OrderDetail)
+                            {
+                                <div class="row text-info">
+                                    <div class="col-5">
+                                        @item.products.ProductName
+                                     </div>
+                                     <div class="col-4 text-start">
+                                         <label class="font-weight-bold"><strong>@item.count pcs *$@item.products.Price</strong></label>
+                                      </div>
+                                    @{
+                                        Decimal setDecimal = item.count * item.products.Price;
+                                        totalorderprice += setDecimal;
+                                    }
+                                    <div class="col-3 text-right">
+                                        <label class="font-weight-bold"><strong>$@Math.Round(setDecimal, 2)</strong></label>
+                                   </div>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+
+                    <br />
+                    <div class="row pb-1">
+                        <div class="col-6 text-end">
+                            <label style="color:white">Total Amount:</label>
+                        </div>
+                        <div class="col-6">
+                            <strong><input class="form-control text-info text-right font-weight-bold" value="$@Math.Round(totalorderprice, 2)" readonly="readonly" /></strong>
+                            @* <h3 style="background-color:white">Total price:@Model.OrderDetail.Sum(c=>c.products.Price*c.count)</h3> *@
+                        </div>
+                    </div>
+                    <div class="row pb-1 d-flex justify-content-end">
+                        <div class="col-6">
+                            @if (Model.Order.OrderStatus != "Completed" && User.IsInRole("Admin")&& Model.Order.OrderStatus!="Cancelled")
+                            {
+                                <a onclick=Delete("/Admin/OrdersAdmin/CancelOrder/@Model.Order.Id") class="btn btn-danger form control"> Cancel order</a>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            
+                
+            </div>
+       </div>
+       <br />
+       <div class="d-flex justify-content-end shadow">
+            @if (User.IsInRole("Admin"))
+            {
+                @switch (Model.Order.OrderStatus)
+                {
+                    case "Approved":
+                        
+                        <button class="btn btn-warning form control border-danger" type="submit" asp-action="Inprocess" asp-route-id="@Model.Order.Id" asp-controller="OrdersAdmin">Update Status to InProcess</button>                     
+                        break;
+                    case "Processing":
+                        <button class="btn btn-warning form control border-danger" type="submit" asp-action="Shipped"  asp-controller="OrdersAdmin" onclick="return validateShippingInput()">Update Status to Shipped</button>
+                        break;
+
+                    default:
+                        @if (Model.Order.OrderStatus == "Completed" || Model.Order.OrderStatus == "Cancelled")
+                        {
+                            if (Model.Order.OrderStatus == "Completed")
+                            {
+                                <button class="btn btn-warning form control border-danger" type="submit" asp-action="Delivered" asp-controller="OrdersAdmin" disabled>Transactions Completed</button>
+                                break;
+
+                            }
+                            else
+                            {
+                                <button class="btn btn-warning form control border-danger" type="submit" asp-action="Delivered" asp-controller="OrdersAdmin" disabled>Order Cancelled</button>
+                                break;
+                                
+                            }
+                            
+                        }
+                        else
+                        {
+                            <button class="btn btn-warning form control border-danger" type="submit" asp-action="Completed" asp-controller="OrdersAdmin">Update Status to Completed</button>
+                            break;
+                        }
+                }
+
+
+
+            }
+            else
+            {
+                <button class="btn btn-primary form-control shadow border-danger" disabled>Order Status:@Model.Order.OrderStatus</button>
+            }
+            
+        </div>
+   </form>
+   
+</div> 
+    
+@section Scripts {
+    <script src="~/js/validateshippinginput.js"></script>
+}
